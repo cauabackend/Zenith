@@ -1,0 +1,66 @@
+id,data,descricao,categoria,valor,tipo,meio_pagamento
+1,2025-01-03,Supermercado Extra,Alimentação,-287.45,debito,cartao_debito
+2,2025-01-05,Salário Empresa XYZ,Renda,5200.00,credito,transferencia
+3,2025-01-06,Uber - Corrida Centro,Transporte,-23.90,debito,cartao_credito
+4,2025-01-07,Netflix Assinatura,Entretenimento,-55.90,debito,cartao_credito
+5,2025-01-08,Farmácia Drogasil,Saúde,-67.30,debito,cartao_debito
+6,2025-01-10,iFood - Jantar,Alimentação,-48.70,debito,cartao_credito
+7,2025-01-12,Conta de Luz - Enel,Moradia,-185.40,debito,boleto
+8,2025-01-13,Spotify Premium,Entretenimento,-21.90,debito,cartao_credito
+9,2025-01-15,Supermercado Pão de Açúcar,Alimentação,-312.80,debito,cartao_debito
+10,2025-01-16,Aluguel Apartamento,Moradia,-1800.00,debito,transferencia
+11,2025-01-17,Posto Shell - Gasolina,Transporte,-220.00,debito,cartao_debito
+12,2025-01-18,Shopping - Roupas Renner,Vestuário,-389.90,debito,cartao_credito
+13,2025-01-20,Conta de Água - Sabesp,Moradia,-95.60,debito,boleto
+14,2025-01-22,iFood - Almoço,Alimentação,-35.50,debito,cartao_credito
+15,2025-01-23,Dentista - Consulta,Saúde,-250.00,debito,pix
+16,2025-01-25,Uber - Corrida Shopping,Transporte,-18.40,debito,cartao_credito
+17,2025-01-27,Supermercado Extra,Alimentação,-198.30,debito,cartao_debito
+18,2025-01-28,Amazon - Livros,Educação,-89.90,debito,cartao_credito
+19,2025-01-30,iFood - Jantar,Alimentação,-62.00,debito,cartao_credito
+20,2025-01-31,Freelance - Projeto Web,Renda,1500.00,credito,pix
+21,2025-02-03,Supermercado Extra,Alimentação,-295.60,debito,cartao_debito
+22,2025-02-05,Salário Empresa XYZ,Renda,5200.00,credito,transferencia
+23,2025-02-06,99 - Corrida,Transporte,-31.20,debito,cartao_credito
+24,2025-02-07,Netflix Assinatura,Entretenimento,-55.90,debito,cartao_credito
+25,2025-02-08,iFood - Jantar,Alimentação,-54.80,debito,cartao_credito
+26,2025-02-10,Curso Udemy - Python,Educação,-27.90,debito,cartao_credito
+27,2025-02-12,Conta de Luz - Enel,Moradia,-210.30,debito,boleto
+28,2025-02-13,Spotify Premium,Entretenimento,-21.90,debito,cartao_credito
+29,2025-02-14,Restaurante - Jantar Especial,Alimentação,-185.00,debito,cartao_credito
+30,2025-02-15,Supermercado Pão de Açúcar,Alimentação,-340.20,debito,cartao_debito
+31,2025-02-16,Aluguel Apartamento,Moradia,-1800.00,debito,transferencia
+32,2025-02-17,Posto Shell - Gasolina,Transporte,-245.00,debito,cartao_debito
+33,2025-02-18,Shopping - Tênis Nike,Vestuário,-599.90,debito,cartao_credito
+34,2025-02-19,Farmácia Drogasil,Saúde,-45.80,debito,cartao_debito
+35,2025-02-20,Conta de Água - Sabesp,Moradia,-102.40,debito,boleto
+36,2025-02-22,iFood - Almoço,Alimentação,-42.30,debito,cartao_credito
+37,2025-02-23,Cinema - Ingresso,Entretenimento,-48.00,debito,cartao_credito
+38,2025-02-25,Uber - Corrida,Transporte,-27.50,debito,cartao_credito
+39,2025-02-27,Supermercado Extra,Alimentação,-267.90,debito,cartao_debito
+40,2025-02-28,iFood - Jantar,Alimentação,-58.40,debito,cartao_credito
+41,2025-03-03,Supermercado Extra,Alimentação,-310.50,debito,cartao_debito
+42,2025-03-05,Salário Empresa XYZ,Renda,5200.00,credito,transferencia
+43,2025-03-06,Uber - Corrida,Transporte,-35.70,debito,cartao_credito
+44,2025-03-07,Netflix Assinatura,Entretenimento,-55.90,debito,cartao_credito
+45,2025-03-08,iFood - Jantar,Alimentação,-72.40,debito,cartao_credito
+46,2025-03-09,iFood - Almoço,Alimentação,-38.90,debito,cartao_credito
+47,2025-03-10,Loja Apple - AirPods,Eletrônicos,-1299.00,debito,cartao_credito
+48,2025-03-11,iFood - Jantar,Alimentação,-65.30,debito,cartao_credito
+49,2025-03-12,Conta de Luz - Enel,Moradia,-198.70,debito,boleto
+50,2025-03-13,Spotify Premium,Entretenimento,-21.90,debito,cartao_credito
+51,2025-03-14,Posto Shell - Gasolina,Transporte,-260.00,debito,cartao_debito
+52,2025-03-15,Supermercado Pão de Açúcar,Alimentação,-358.40,debito,cartao_debito
+53,2025-03-16,Aluguel Apartamento,Moradia,-1800.00,debito,transferencia
+54,2025-03-17,iFood - Jantar,Alimentação,-55.00,debito,cartao_credito
+55,2025-03-18,Shopping - Roupas Zara,Vestuário,-450.00,debito,cartao_credito
+56,2025-03-19,Bar com Amigos,Entretenimento,-178.50,debito,cartao_credito
+57,2025-03-20,Conta de Água - Sabesp,Moradia,-98.30,debito,boleto
+58,2025-03-21,Farmácia Drogasil,Saúde,-82.60,debito,cartao_debito
+59,2025-03-22,Uber - Corrida,Transporte,-19.80,debito,cartao_credito
+60,2025-03-24,iFood - Almoço,Alimentação,-44.60,debito,cartao_credito
+61,2025-03-25,Game Pass Assinatura,Entretenimento,-29.90,debito,cartao_credito
+62,2025-03-27,Supermercado Extra,Alimentação,-285.70,debito,cartao_debito
+63,2025-03-28,Freelance - Projeto App,Renda,2000.00,credito,pix
+64,2025-03-29,iFood - Jantar,Alimentação,-68.90,debito,cartao_credito
+65,2025-03-30,Uber - Corrida,Transporte,-28.40,debito,cartao_credito
