@@ -1,0 +1,57 @@
+{
+  "cliente": {
+    "id": "CLI-2024-001",
+    "nome": "Lucas Mendes",
+    "idade": 27,
+    "profissao": "Desenvolvedor de Software",
+    "renda_mensal": 5200.00,
+    "renda_extra_media": 1750.00,
+    "cidade": "São Paulo",
+    "estado": "SP"
+  },
+  "perfil_financeiro": {
+    "perfil_investidor": "moderado",
+    "tolerancia_risco": "media",
+    "horizonte_investimento": "medio_prazo",
+    "objetivo_principal": "Reserva de emergência e viagem internacional",
+    "conhecimento_financeiro": "intermediario",
+    "possui_reserva_emergencia": false,
+    "valor_reserva_atual": 2800.00,
+    "meta_reserva_emergencia": 15600.00,
+    "dividas_ativas": false
+  },
+  "preferencias": {
+    "canal_preferido": "chat",
+    "horario_preferido": "noite",
+    "frequencia_alertas": "semanal",
+    "tipo_alertas": ["gasto_acima_media", "meta_atingida", "conta_proxima_vencimento", "oportunidade_economia"],
+    "categorias_monitoradas": ["Alimentação", "Entretenimento", "Transporte", "Vestuário"],
+    "limite_gasto_mensal": {
+      "Alimentação": 1200.00,
+      "Transporte": 400.00,
+      "Entretenimento": 300.00,
+      "Vestuário": 500.00,
+      "Saúde": 400.00,
+      "Educação": 200.00,
+      "Eletrônicos": 0
+    }
+  },
+  "metas": [
+    {
+      "id": "META-001",
+      "descricao": "Reserva de emergência (3 meses de gastos)",
+      "valor_alvo": 15600.00,
+      "valor_atual": 2800.00,
+      "prazo": "2025-12-31",
+      "prioridade": "alta"
+    },
+    {
+      "id": "META-002",
+      "descricao": "Viagem ao Japão",
+      "valor_alvo": 25000.00,
+      "valor_atual": 3500.00,
+      "prazo": "2026-06-30",
+      "prioridade": "media"
+    }
+  ]
+}
