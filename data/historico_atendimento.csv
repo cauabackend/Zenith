@@ -1,0 +1,9 @@
+id,data,canal,assunto,resumo,sentimento,resolvido
+1,2024-11-15,chat,Dúvida sobre fatura,Cliente questionou cobrança duplicada no cartão de crédito. Identificado erro e estorno realizado.,neutro,sim
+2,2024-12-02,telefone,Limite do cartão,Cliente solicitou aumento de limite. Análise de crédito aprovada - limite aumentado de R$3000 para R$5000.,positivo,sim
+3,2025-01-10,chat,Extrato incorreto,Cliente reportou transação desconhecida. Após análise verificou-se compra legítima esquecida.,neutro,sim
+4,2025-01-22,email,Planejamento financeiro,Cliente pediu dicas para economizar. Enviado material sobre controle de gastos e reserva de emergência.,positivo,sim
+5,2025-02-08,chat,Alerta de gasto alto,Sistema alertou gasto acima da média em Vestuário. Cliente confirmou compra planejada.,neutro,sim
+6,2025-02-18,chat,Cartão recusado,Cliente teve cartão recusado por exceder limite. Orientado sobre gestão de limite.,negativo,sim
+7,2025-03-05,telefone,Investimentos,Cliente demonstrou interesse em começar a investir parte do salário. Agendada consultoria.,positivo,nao
+8,2025-03-10,chat,Gasto não reconhecido,Cliente questionou compra na Apple Store. Após verificação confirmou a compra dos AirPods.,neutro,sim
