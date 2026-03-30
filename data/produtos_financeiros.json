@@ -1,0 +1,70 @@
+{
+  "produtos": [
+    {
+      "id": "PROD-001",
+      "nome": "CDB Liquidez Diária",
+      "categoria": "Renda Fixa",
+      "rentabilidade": "100% CDI",
+      "risco": "baixo",
+      "liquidez": "diaria",
+      "investimento_minimo": 100.00,
+      "indicado_para": ["reserva_emergencia", "conservador", "moderado"],
+      "descricao": "Ideal para reserva de emergência. Rendimento diário com possibilidade de resgate a qualquer momento."
+    },
+    {
+      "id": "PROD-002",
+      "nome": "Tesouro Selic",
+      "categoria": "Renda Fixa",
+      "rentabilidade": "Taxa Selic",
+      "risco": "muito_baixo",
+      "liquidez": "D+1",
+      "investimento_minimo": 30.00,
+      "indicado_para": ["reserva_emergencia", "conservador", "moderado"],
+      "descricao": "Título público com rendimento atrelado à Selic. Segurança do governo federal."
+    },
+    {
+      "id": "PROD-003",
+      "nome": "LCI/LCA Pré-fixado",
+      "categoria": "Renda Fixa",
+      "rentabilidade": "12.5% a.a.",
+      "risco": "baixo",
+      "liquidez": "vencimento_90_dias",
+      "investimento_minimo": 500.00,
+      "indicado_para": ["medio_prazo", "moderado"],
+      "descricao": "Isento de IR para pessoa física. Boa opção para objetivos de médio prazo."
+    },
+    {
+      "id": "PROD-004",
+      "nome": "Fundo Multimercado Macro",
+      "categoria": "Fundos",
+      "rentabilidade": "CDI + 3% a.a. (meta)",
+      "risco": "medio",
+      "liquidez": "D+30",
+      "investimento_minimo": 1000.00,
+      "indicado_para": ["medio_prazo", "moderado", "arrojado"],
+      "descricao": "Fundo diversificado com estratégias em juros, câmbio e bolsa."
+    },
+    {
+      "id": "PROD-005",
+      "nome": "Conta com Cashback",
+      "categoria": "Conta Digital",
+      "rentabilidade": "1.5% cashback em compras",
+      "risco": "nenhum",
+      "liquidez": "imediata",
+      "investimento_minimo": 0,
+      "indicado_para": ["economia_diaria", "todos"],
+      "descricao": "Receba de volta parte do valor das suas compras automaticamente."
+    },
+    {
+      "id": "PROD-006",
+      "nome": "Seguro de Vida Básico",
+      "categoria": "Seguros",
+      "rentabilidade": "N/A",
+      "risco": "nenhum",
+      "liquidez": "N/A",
+      "investimento_minimo": 35.00,
+      "indicado_para": ["protecao", "todos"],
+      "descricao": "Proteção financeira básica com cobertura por morte e invalidez."
+    }
+  ]
+}
