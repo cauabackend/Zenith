@@ -1,6 +1,5 @@
 """
-Zenith - Agente Financeiro Inteligente
-Controle de gastos e alertas personalizados com IA Generativa.
+Zenith — agente financeiro para controle de gastos.
 """
 
 import streamlit as st
@@ -14,54 +13,43 @@ from pathlib import Path
 # Configuração da página
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Zenith – Agente Financeiro",
-    page_icon="💰",
+    page_title="Zenith",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ---------------------------------------------------------------------------
-# Estilo customizado
+# Estilo
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-    /* Header */
     .main-header {
-        background: linear-gradient(135deg, #0f4c75 0%, #1b262c 100%);
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-        color: white;
+        padding: 1.2rem 0 0.8rem 0;
+        margin-bottom: 1rem;
     }
-    .main-header h1 { margin: 0; font-size: 1.8rem; }
-    .main-header p  { margin: 0.3rem 0 0 0; opacity: 0.85; font-size: 0.95rem; }
+    .main-header h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+    }
+    .main-header p {
+        margin: 0.2rem 0 0 0;
+        opacity: 0.6;
+        font-size: 0.9rem;
+    }
 
-    /* Cards de alerta */
     .alert-card {
-        padding: 1rem 1.2rem;
-        border-radius: 10px;
-        margin-bottom: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.6rem;
         border-left: 4px solid;
         color: #1a1a1a !important;
+        font-size: 0.9rem;
     }
-    .alert-danger  { background: #fff5f5; border-color: #e53e3e; }
-    .alert-warning { background: #fffaf0; border-color: #ed8936; }
-    .alert-success { background: #f0fff4; border-color: #38a169; }
-    .alert-info    { background: #ebf8ff; border-color: #3182ce; }
-
-    /* Métricas na sidebar */
-    .metric-box {
-        background: #f7fafc;
-        padding: 0.8rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-        text-align: center;
-    }
-    .metric-box .label { font-size: 0.75rem; color: #718096; text-transform: uppercase; }
-    .metric-box .value { font-size: 1.4rem; font-weight: 700; color: #2d3748; }
-
-    /* Chat */
-    .stChatMessage { border-radius: 12px !important; }
+    .alert-danger  { background: #fff5f5; border-color: #c53030; }
+    .alert-warning { background: #fffaf0; border-color: #c05621; }
+    .alert-success { background: #f0fff4; border-color: #276749; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -99,26 +87,25 @@ def carregar_historico_atendimento() -> pd.DataFrame:
 # Análise de gastos
 # ---------------------------------------------------------------------------
 def analisar_gastos(df: pd.DataFrame, perfil: dict) -> dict:
-    """Gera resumo analítico dos gastos do cliente."""
     despesas = df[df["tipo"] == "debito"].copy()
     despesas["valor_abs"] = despesas["valor"].abs()
     receitas = df[df["tipo"] == "credito"]
 
-    # Por mês
     despesas["mes"] = despesas["data"].dt.to_period("M").astype(str)
     gasto_mensal = despesas.groupby("mes")["valor_abs"].sum().to_dict()
 
-    # Por categoria
-    gasto_categoria = despesas.groupby("categoria")["valor_abs"].sum().sort_values(ascending=False).to_dict()
+    gasto_categoria = (
+        despesas.groupby("categoria")["valor_abs"]
+        .sum()
+        .sort_values(ascending=False)
+        .to_dict()
+    )
 
-    # Média mensal por categoria
     n_meses = despesas["mes"].nunique() or 1
     media_categoria = {k: round(v / n_meses, 2) for k, v in gasto_categoria.items()}
 
-    # Limites definidos pelo cliente
     limites = perfil.get("preferencias", {}).get("limite_gasto_mensal", {})
 
-    # Alertas automáticos
     alertas = []
     ultimo_mes = despesas["mes"].max()
     gastos_ultimo_mes = despesas[despesas["mes"] == ultimo_mes]
@@ -128,29 +115,28 @@ def analisar_gastos(df: pd.DataFrame, perfil: dict) -> dict:
         if limite <= 0:
             continue
         gasto_atual = gasto_cat_ultimo.get(cat, 0)
-        percentual = (gasto_atual / limite) * 100 if limite else 0
-        if percentual >= 100:
+        pct = (gasto_atual / limite) * 100 if limite else 0
+        if pct >= 100:
             alertas.append({
                 "tipo": "danger",
                 "categoria": cat,
-                "mensagem": f"🚨 {cat}: R${gasto_atual:,.2f} gastos — limite de R${limite:,.2f} ULTRAPASSADO ({percentual:.0f}%)"
+                "mensagem": f"{cat}: R${gasto_atual:,.2f} — limite de R${limite:,.2f} ultrapassado ({pct:.0f}%)"
             })
-        elif percentual >= 80:
+        elif pct >= 80:
             alertas.append({
                 "tipo": "warning",
                 "categoria": cat,
-                "mensagem": f"⚠️ {cat}: R${gasto_atual:,.2f} de R${limite:,.2f} — {percentual:.0f}% do limite"
+                "mensagem": f"{cat}: R${gasto_atual:,.2f} de R${limite:,.2f} — {pct:.0f}% do limite"
             })
 
-    # Gasto total vs receita
     receita_total = receitas["valor"].sum()
     despesa_total = despesas["valor_abs"].sum()
     saldo = receita_total - despesa_total
 
-    # Transações atípicas (>2x a média da categoria)
     atipicas = []
     for _, row in despesas.iterrows():
-        media_cat = media_categoria.get(row["categoria"], 0) / max(despesas[despesas["categoria"] == row["categoria"]].shape[0] / n_meses, 1)
+        n_transacoes_cat = despesas[despesas["categoria"] == row["categoria"]].shape[0] / n_meses
+        media_cat = media_categoria.get(row["categoria"], 0) / max(n_transacoes_cat, 1)
         if row["valor_abs"] > media_cat * 3 and row["valor_abs"] > 200:
             atipicas.append({
                 "data": row["data"].strftime("%d/%m/%Y"),
@@ -174,7 +160,7 @@ def analisar_gastos(df: pd.DataFrame, perfil: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Construção do System Prompt
+# System Prompt
 # ---------------------------------------------------------------------------
 def construir_system_prompt(perfil: dict, analise: dict, produtos: dict, historico: pd.DataFrame) -> str:
     cliente = perfil["cliente"]
@@ -187,7 +173,7 @@ def construir_system_prompt(perfil: dict, analise: dict, produtos: dict, histori
         for m in metas
     )
 
-    alertas_str = "\n".join(f"  - {a['mensagem']}" for a in analise["alertas"]) or "  Nenhum alerta ativo."
+    alertas_str = "\n".join(f"  - {a['mensagem']}" for a in analise["alertas"]) or "  Nenhum alerta."
 
     gastos_cat_str = "\n".join(
         f"  - {cat}: R${val:,.2f} (média mensal: R${analise['media_categoria'].get(cat, 0):,.2f})"
@@ -197,7 +183,7 @@ def construir_system_prompt(perfil: dict, analise: dict, produtos: dict, histori
     atipicas_str = "\n".join(
         f"  - {t['data']} | {t['descricao']} | R${t['valor']:,.2f} ({t['categoria']})"
         for t in analise["transacoes_atipicas"]
-    ) or "  Nenhuma transação atípica identificada."
+    ) or "  Nenhuma."
 
     produtos_str = "\n".join(
         f"  - {p['nome']} ({p['categoria']}): {p['rentabilidade']} | Risco: {p['risco']} | Mínimo: R${p['investimento_minimo']}"
@@ -209,80 +195,62 @@ def construir_system_prompt(perfil: dict, analise: dict, produtos: dict, histori
         for _, row in historico.iterrows()
     )
 
-    return f"""Você é o Zenith, um agente financeiro inteligente especializado em controle de gastos e alertas personalizados.
+    return f"""Você é o Zenith, um assistente de controle de gastos. Fale de forma direta, sem enrolação, em português brasileiro.
+Quando fizer cálculos, mostre o passo a passo. Use emojis só se fizer sentido, sem exagero.
 
-## SUA PERSONALIDADE
-- Tom: amigável, direto e educativo — como um amigo que entende de finanças.
-- Use linguagem simples, evite jargões desnecessários.
-- Seja proativo: quando identificar padrões ruins, alerte com empatia.
-- Use emojis com moderação para deixar a conversa leve.
-- Responda SEMPRE em português brasileiro.
-- Quando fizer contas, mostre o raciocínio.
+REGRAS:
+- Use APENAS os dados abaixo. Nunca invente transações ou valores.
+- Se não tiver a informação, diga que não tem.
+- Nada de conselho jurídico ou tributário — mande procurar um profissional.
+- Só recomende produtos do catálogo abaixo.
 
-## REGRAS DE SEGURANÇA (ANTI-ALUCINAÇÃO)
-- Use APENAS os dados fornecidos abaixo. Nunca invente transações ou valores.
-- Se não souber algo, diga "não tenho essa informação nos seus dados".
-- Não dê conselhos jurídicos ou tributários específicos — sugira consultar um profissional.
-- Não recomende produtos que não estejam no catálogo abaixo.
-- Ao sugerir economia, baseie-se nos dados reais de gasto do cliente.
-
-## DADOS DO CLIENTE
-Nome: {cliente['nome']}
-Idade: {cliente['idade']} anos
-Profissão: {cliente['profissao']}
-Renda mensal (salário): R${cliente['renda_mensal']:,.2f}
-Renda extra média: R${cliente['renda_extra_media']:,.2f}
+CLIENTE
+Nome: {cliente['nome']} | Idade: {cliente['idade']} | Profissão: {cliente['profissao']}
+Renda mensal: R${cliente['renda_mensal']:,.2f} | Renda extra média: R${cliente['renda_extra_media']:,.2f}
 Cidade: {cliente['cidade']}/{cliente['estado']}
 
-## PERFIL FINANCEIRO
-Perfil de investidor: {fin['perfil_investidor']}
-Tolerância a risco: {fin['tolerancia_risco']}
-Objetivo principal: {fin['objetivo_principal']}
-Conhecimento financeiro: {fin['conhecimento_financeiro']}
-Possui reserva de emergência: {'Sim' if fin['possui_reserva_emergencia'] else 'Não (em construção)'}
-Reserva atual: R${fin['valor_reserva_atual']:,.2f} de R${fin['meta_reserva_emergencia']:,.2f}
+PERFIL FINANCEIRO
+Investidor: {fin['perfil_investidor']} | Risco: {fin['tolerancia_risco']}
+Objetivo: {fin['objetivo_principal']}
+Reserva de emergência: R${fin['valor_reserva_atual']:,.2f} de R${fin['meta_reserva_emergencia']:,.2f} ({'completa' if fin['possui_reserva_emergencia'] else 'em construção'})
 
-## METAS
+METAS
 {metas_str}
 
-## RESUMO FINANCEIRO (período: {analise['n_meses']} meses)
-Receita total: R${analise['receita_total']:,.2f}
-Despesa total: R${analise['despesa_total']:,.2f}
-Saldo acumulado: R${analise['saldo']:,.2f}
+RESUMO ({analise['n_meses']} meses)
+Receita: R${analise['receita_total']:,.2f} | Despesa: R${analise['despesa_total']:,.2f} | Saldo: R${analise['saldo']:,.2f}
 
-## GASTOS POR CATEGORIA (acumulado):
+GASTOS POR CATEGORIA
 {gastos_cat_str}
 
-## ALERTAS ATIVOS (mês {analise['ultimo_mes']}):
+ALERTAS ({analise['ultimo_mes']})
 {alertas_str}
 
-## TRANSAÇÕES ATÍPICAS DETECTADAS:
+TRANSAÇÕES ATÍPICAS
 {atipicas_str}
 
-## LIMITES DE GASTO DEFINIDOS PELO CLIENTE:
+LIMITES DO CLIENTE
 {json.dumps(prefs['limite_gasto_mensal'], ensure_ascii=False, indent=2)}
 
-## PRODUTOS FINANCEIROS DISPONÍVEIS:
+PRODUTOS DISPONÍVEIS
 {produtos_str}
 
-## HISTÓRICO DE ATENDIMENTOS:
+HISTÓRICO DE ATENDIMENTOS
 {hist_str}
 
-## COMO AGIR
-1. Se o cliente perguntar sobre gastos → analise os dados acima e responda com números reais.
-2. Se houver alertas ativos → mencione proativamente quando relevante.
-3. Se perguntar sobre investimentos → sugira produtos do catálogo compatíveis com o perfil.
-4. Se pedir dicas de economia → baseie-se nos padrões de gasto reais (ex: frequência de iFood, gastos com transporte).
-5. Se perguntar sobre metas → mostre progresso e calcule quanto falta por mês para atingir no prazo.
+COMO RESPONDER
+1. Pergunta sobre gastos → responda com números reais dos dados.
+2. Alertas ativos → mencione quando fizer sentido.
+3. Investimentos → sugira do catálogo, respeitando o perfil.
+4. Dicas de economia → baseie-se nos padrões reais (ex: frequência de iFood).
+5. Metas → calcule quanto guardar por mês pra atingir no prazo.
 """
 
 
 # ---------------------------------------------------------------------------
-# Integração com LLM
+# LLM
 # ---------------------------------------------------------------------------
 def get_llm_response(messages: list, system_prompt: str, api_key: str, provider: str) -> str:
-    """Obtém resposta da LLM escolhida."""
-
     if provider == "Google Gemini":
         import google.generativeai as genai
         genai.configure(api_key=api_key)
@@ -290,9 +258,8 @@ def get_llm_response(messages: list, system_prompt: str, api_key: str, provider:
             model_name="gemini-2.0-flash",
             system_instruction=system_prompt,
         )
-        # Converter histórico para formato Gemini
         gemini_history = []
-        for msg in messages[:-1]:  # Todos menos o último
+        for msg in messages[:-1]:
             role = "user" if msg["role"] == "user" else "model"
             gemini_history.append({"role": role, "parts": [msg["content"]]})
 
@@ -317,61 +284,53 @@ def get_llm_response(messages: list, system_prompt: str, api_key: str, provider:
         full_messages = [{"role": "system", "content": system_prompt}] + messages
         resp = req.post(
             "http://localhost:11434/api/chat",
-            json={"model": "llama3.1:8b", "messages": full_messages, "stream": False},
+            json={"model": "llama3.2:3b", "messages": full_messages, "stream": False},
         )
         return resp.json()["message"]["content"]
 
 
 # ---------------------------------------------------------------------------
-# Interface principal
+# App
 # ---------------------------------------------------------------------------
 def main():
-    # ---- Carregar dados ----
     try:
         transacoes = carregar_transacoes()
         perfil = carregar_perfil()
         produtos = carregar_produtos()
         historico = carregar_historico_atendimento()
     except FileNotFoundError as e:
-        st.error(f"Arquivo de dados não encontrado: {e}")
-        st.info("Certifique-se de que a pasta `data/` contém todos os arquivos necessários.")
+        st.error(f"Arquivo não encontrado: {e}")
         return
 
     analise = analisar_gastos(transacoes, perfil)
 
-    # ---- Sidebar: Configuração + Perfil ----
+    # -- Sidebar --
     with st.sidebar:
-        st.markdown("## ⚙️ Configuração da LLM")
-        provider = st.selectbox("Provedor", ["Google Gemini", "OpenAI", "Ollama (Local)"])
+        st.markdown("**LLM**")
+        provider = st.selectbox("Provedor", ["Google Gemini", "OpenAI", "Ollama (Local)"], label_visibility="collapsed")
 
         if provider != "Ollama (Local)":
-            api_key = st.text_input(
-                f"API Key ({provider})",
-                type="password",
-                help="Sua chave de API. Nunca é armazenada."
-            )
+            api_key = st.text_input("API Key", type="password", label_visibility="collapsed", placeholder=f"API Key ({provider})")
         else:
             api_key = "local"
-            st.caption("Certifique-se de que o Ollama está rodando em `localhost:11434`.")
+            st.caption("Ollama precisa estar rodando em localhost:11434")
 
         st.divider()
 
-        # Perfil do cliente
         cliente = perfil["cliente"]
-        st.markdown(f"### 👤 {cliente['nome']}")
+        st.markdown(f"**{cliente['nome']}**")
         st.caption(f"{cliente['profissao']} · {cliente['cidade']}/{cliente['estado']}")
 
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("Renda Mensal", f"R${cliente['renda_mensal']:,.0f}")
+            st.metric("Renda", f"R${cliente['renda_mensal']:,.0f}")
         with col2:
-            saldo_ultimo = analise["saldo"] / analise["n_meses"]
-            st.metric("Saldo Médio/Mês", f"R${saldo_ultimo:,.0f}")
+            saldo_medio = analise["saldo"] / analise["n_meses"]
+            st.metric("Saldo médio", f"R${saldo_medio:,.0f}")
 
         st.divider()
 
-        # Progresso das metas
-        st.markdown("### 🎯 Metas")
+        st.markdown("**Metas**")
         for meta in perfil.get("metas", []):
             progresso = meta["valor_atual"] / meta["valor_alvo"]
             st.caption(meta["descricao"])
@@ -379,46 +338,43 @@ def main():
 
         st.divider()
 
-        # Gráfico de gastos por categoria
-        st.markdown("### 📊 Gastos por Categoria")
+        st.markdown("**Gastos por categoria**")
         cat_df = pd.DataFrame({
             "Categoria": analise["gasto_categoria"].keys(),
             "Total (R$)": analise["gasto_categoria"].values(),
         }).sort_values("Total (R$)", ascending=True)
         st.bar_chart(cat_df.set_index("Categoria"), horizontal=True)
 
-    # ---- Header ----
+    # -- Header --
     st.markdown("""
     <div class="main-header">
-        <h1>💰 Zenith</h1>
-        <p>Seu agente financeiro inteligente — controle de gastos e alertas personalizados</p>
+        <h1>Zenith</h1>
+        <p>Controle de gastos e alertas</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # ---- Alertas ativos ----
+    # -- Alertas --
     if analise["alertas"]:
-        with st.expander(f"🔔 {len(analise['alertas'])} alerta(s) ativo(s) — clique para ver", expanded=True):
+        with st.expander(f"{len(analise['alertas'])} alerta(s) neste mês", expanded=True):
             for alerta in analise["alertas"]:
-                css_class = f"alert-{alerta['tipo']}"
-                st.markdown(f'<div class="alert-card {css_class}">{alerta["mensagem"]}</div>', unsafe_allow_html=True)
+                css = f"alert-{alerta['tipo']}"
+                st.markdown(f'<div class="alert-card {css}">{alerta["mensagem"]}</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="alert-card alert-success">✅ Tudo sob controle! Nenhum alerta ativo este mês.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="alert-card alert-success">Nenhum limite ultrapassado este mês.</div>', unsafe_allow_html=True)
 
-    # ---- Chat ----
     st.markdown("---")
 
-    # Inicializar histórico de chat
+    # -- Chat --
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # Sugestões de perguntas
     if not st.session_state.messages:
-        st.caption("💡 Experimente perguntar:")
+        st.caption("Perguntas rápidas:")
         suggestions = [
             "Como estão meus gastos este mês?",
             "Onde posso economizar?",
-            "Quanto falta para minha reserva de emergência?",
-            "Qual meu maior gasto com iFood?",
+            "Quanto falta pra minha reserva?",
+            "Qual meu gasto total com iFood?",
         ]
         cols = st.columns(len(suggestions))
         for i, sug in enumerate(suggestions):
@@ -426,28 +382,24 @@ def main():
                 st.session_state.messages.append({"role": "user", "content": sug})
                 st.rerun()
 
-    # Exibir mensagens anteriores
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"], avatar="🧑‍💻" if msg["role"] == "user" else "💰"):
+        with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Input do chat
-    if prompt := st.chat_input("Pergunte sobre seus gastos, metas ou peça dicas..."):
+    if prompt := st.chat_input("Pergunte sobre seus gastos..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user", avatar="🧑‍💻"):
+        with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Verificar API key
         if provider != "Ollama (Local)" and not api_key:
-            with st.chat_message("assistant", avatar="💰"):
-                st.warning("Configure sua API Key na barra lateral para começar!")
+            with st.chat_message("assistant"):
+                st.warning("Coloca a API Key na sidebar.")
             return
 
-        # Gerar resposta
         system_prompt = construir_system_prompt(perfil, analise, produtos, historico)
 
-        with st.chat_message("assistant", avatar="💰"):
-            with st.spinner("Analisando seus dados..."):
+        with st.chat_message("assistant"):
+            with st.spinner(""):
                 try:
                     response = get_llm_response(
                         st.session_state.messages,
@@ -458,8 +410,7 @@ def main():
                     st.markdown(response)
                     st.session_state.messages.append({"role": "assistant", "content": response})
                 except Exception as e:
-                    st.error(f"Erro ao se comunicar com a LLM: {str(e)}")
-                    st.info("Verifique sua API key e conexão com a internet.")
+                    st.error(f"Erro na LLM: {str(e)}")
 
 
 if __name__ == "__main__":
