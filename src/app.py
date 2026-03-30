@@ -42,6 +42,7 @@ st.markdown("""
         border-radius: 10px;
         margin-bottom: 0.8rem;
         border-left: 4px solid;
+        color: #1a1a1a !important;
     }
     .alert-danger  { background: #fff5f5; border-color: #e53e3e; }
     .alert-warning { background: #fffaf0; border-color: #ed8936; }
